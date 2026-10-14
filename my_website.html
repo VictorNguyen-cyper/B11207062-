@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="scroll-smooth" data-theme="obsidian">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finn (福榮) — 開南大學資管系 | 極簡奢華個人網站</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cormorant Garamond, Noto Serif TC, Plus Jakarta Sans, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', '"Noto Serif TC"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        /* $10,000 Quiet Luxury Theme Tokens */
+        :root,
+        [data-theme="obsidian"] {
+            --bg-main: #0B0B0C;
+            --bg-elevated: #121215;
+            --bg-subtle: #18181C;
+            --text-primary: #F5F3EE;
+            --text-secondary: #A6A39B;
+            --text-muted: #6C6962;
+            --accent: #D4AF37;
+            --accent-soft: rgba(212, 175, 55, 0.14);
+            --border-hairline: rgba(245, 243, 238, 0.11);
+        }
+
+        [data-theme="emerald"] {
+            --bg-main: #07110E;
+            --bg-elevated: #0D1B17;
+            --bg-subtle: #132620;
+            --text-primary: #ECF5F1;
+            --text-secondary: #98B2A8;
+            --text-muted: #5E786F;
+            --accent: #34D399;
+            --accent-soft: rgba(52, 211, 153, 0.14);
+            --border-hairline: rgba(236, 245, 241, 0.11);
+        }
+
+        [data-theme="sapphire"] {
+            --bg-main: #070B14;
+            --bg-elevated: #0E1525;
+            --bg-subtle: #151F35;
+            --text-primary: #F0F4FA;
+            --text-secondary: #9BA8C2;
+            --text-muted: #606E8A;
+            --accent: #60A5FA;
+            --accent-soft: rgba(96, 165, 250, 0.14);
+            --border-hairline: rgba(240, 244, 250, 0.11);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+            transition: background-color 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-x: hidden;
+        }
+
+        .hairline-border {
+            border-color: var(--border-hairline);
+        }
+
+        .min-card {
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--border-hairline);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .min-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 20px 50px -20px var(--accent-soft);
+        }
+
+        .btn-primary-lux {
+            background-color: var(--text-primary);
+            color: var(--bg-main);
+            transition: all 0.25s ease;
+        }
+
+        .btn-primary-lux:hover {
+            background-color: var(--accent);
+            color: #000000;
+            transform: translateY(-1px);
+        }
+
+        /* Editorial Photo Filters */
+        .photo-filter-natural {
+            filter: contrast(1.02) saturate(1.02);
+        }
+        .photo-filter-bw {
+            filter: grayscale(100%) contrast(1.18);
+        }
+        .photo-filter-warm {
+            filter: sepia(28%) contrast(1.06) brightness(1.02);
+        }
+
+        /* Custom Range Slider */
+        input[type="range"] {
+            accent-color: var(--accent);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-amber-400/30 selection:text-amber-200">
+
+    <script>
+        var PHOTO_STORAGE_KEY = 'finn_knu_mis_real_photo_v2';
+
+        // Direct file path candidates for your real uploaded photo (Zero AI / Zero Canvas drawing)
+        var REAL_PHOTO_PATHS = [
+            'myphoto_2.jpg',
+            'images/myphoto_2.jpg',
+            'myphoto.jpg',
+            'images/myphoto.jpg',
+            'istockphoto-538665020-612x612.jpg',
+            'images/istockphoto-538665020-612x612.jpg',
+            'https://www.rossoverdi.com/uploads/monthly_2026_01/istockphoto-538665020-612x612.jpg.816c9247775a00bb68826fb644df9081.jpg'
+        ];
+
+        window.handleDefaultPhotoFallback = function(imgEl) {
+            if (!imgEl) return;
+
+            // 1. Check if user already selected their real photo file in browser storage
+            try {
+                var savedPhoto = localStorage.getItem(PHOTO_STORAGE_KEY);
+                if (savedPhoto && imgEl.src !== savedPhoto) {
+                    imgEl.src = savedPhoto;
+                    var badge = document.getElementById('photo-source-badge');
+                    if (badge) badge.textContent = 'myphoto_2.jpg (已載入原圖)';
+                    return;
+                }
+            } catch (e) {}
+
+            // 2. Step through real file paths sequentially (no AI/Canvas generated image)
+            var idx = parseInt(imgEl.getAttribute('data-path-idx') || '0', 10);
+            if (idx < REAL_PHOTO_PATHS.length) {
+                var nextSrc = REAL_PHOTO_PATHS[idx];
+                imgEl.setAttribute('data-path-idx', String(idx + 1));
+                imgEl.src = nextSrc;
+            } else {
+                imgEl.onerror = null;
+                var promptOverlay = document.getElementById('select-real-photo-prompt');
+                if (promptOverlay) {
+                    promptOverlay.classList.remove('hidden');
+                    promptOverlay.classList.add('flex');
+                }
+            }
+        };
+    </script>
+
+    <header class="sticky top-0 z-40 backdrop-blur-xl border-b hairline-border" style="background-color: rgba(11, 11, 12, 0.78);">
+        <div class="max-w-6xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-4">
+            <!-- Brand Identity -->
+            <a href="#home" class="flex items-center gap-3 group">
+                <div class="w-9 h-9 rounded-full flex items-center justify-center border hairline-border font-serif font-bold text-lg transition group-hover:scale-105" style="background-color: var(--bg-subtle); color: var(--accent);">
+                    F
+                </div>
+                <div>
+                    <span class="font-serif font-semibold tracking-wide text-base block leading-none" id="nav-student-name">Finn · 福榮</span>
+                    <span class="font-mono text-[10px] tracking-widest uppercase block mt-1" style="color: var(--text-muted);" id="nav-student-dept">KNU MIS · 開南大學資管系</span>
+                </div>
+            </a>
+
+            <!-- 4 Required Sections Navigation -->
+            <nav class="hidden md:flex items-center gap-7 text-xs font-medium tracking-wider uppercase" style="color: var(--text-secondary);">
+                <a href="#home" class="hover:opacity-100 transition flex items-center gap-1.5">
+                    <span class="font-mono text-[10px]" style="color: var(--accent);">01.</span> 首頁 / 個人介紹
+                </a>
+                <a href="#about" class="hover:opacity-100 transition flex items-center gap-1.5">
+                    <span class="font-mono text-[10px]" style="color: var(--accent);">02.</span> 關於我
+                </a>
+                <a href="#skills" class="hover:opacity-100 transition flex items-center gap-1.5">
+                    <span class="font-mono text-[10px]" style="color: var(--accent);">03.</span> 技能
+                </a>
+                <a href="#contact" class="hover:opacity-100 transition flex items-center gap-1.5">
+                    <span class="font-mono text-[10px]" style="color: var(--accent);">04.</span> 聯繫方式
+                </a>
+            </nav>
+
+            <!-- Luxury Theme Switcher & Edit Modal Trigger -->
+            <div class="flex items-center gap-2.5">
+                <div class="flex items-center gap-1.5 p-1 rounded-full border hairline-border" style="background-color: var(--bg-subtle);" title="切換 $10k 奢華主題">
+                    <button type="button" onclick="setTheme('obsidian')" id="theme-obsidian" class="w-5 h-5 rounded-full bg-[#D4AF37] ring-2 ring-white/60 scale-110 transition" title="Obsidian Gold (黑曜流金)"></button>
+                    <button type="button" onclick="setTheme('emerald')" id="theme-emerald" class="w-5 h-5 rounded-full bg-[#34D399] opacity-50 transition" title="Emerald Titanium (翡翠鈦金)"></button>
+                    <button type="button" onclick="setTheme('sapphire')" id="theme-sapphire" class="w-5 h-5 rounded-full bg-[#60A5FA] opacity-50 transition" title="Royal Sapphire (皇家藍寶)"></button>
+                </div>
+
+                <button type="button" onclick="openEditModal()" class="px-3 py-1.5 rounded-full text-xs font-mono border hairline-border hover:opacity-80 transition flex items-center gap-1.5" style="background-color: var(--bg-subtle);">
+                    <i class="ph ph-sliders-horizontal" style="color: var(--accent);"></i>
+                    <span class="hidden sm:inline">編輯資料</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-8 pt-10 sm:pt-16 pb-24 space-y-24 sm:space-y-32">
+
+        <!-- 01. 首頁 / 個人介紹 -->
+        <section id="home" class="scroll-mt-24">
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b hairline-border">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-2 h-2 rounded-full animate-pulse" style="background-color: var(--accent);"></span>
+                    <span class="font-mono text-xs tracking-widest uppercase" style="color: var(--text-secondary);">SECTION 01 // 首頁 · 個人介紹</span>
+                </div>
+
+                <!-- Name Mode Switcher -->
+                <div class="flex items-center gap-2">
+                    <span class="text-[11px] font-mono" style="color: var(--text-muted);">稱呼切換：</span>
+                    <div class="inline-flex rounded-full p-0.5 border hairline-border" style="background-color: var(--bg-subtle);">
+                        <button type="button" onclick="switchNameDisplay('both')" id="name-mode-both" class="px-2.5 py-0.5 rounded-full text-[11px] font-sans font-medium transition" style="background-color: var(--text-primary); color: var(--bg-main);">
+                            我是 Finn
+                        </button>
+                        <button type="button" onclick="switchNameDisplay('furong')" id="name-mode-furong" class="px-2.5 py-0.5 rounded-full text-[11px] font-sans font-medium transition">
+                            我是福榮
+                        </button>
+                        <button type="button" onclick="switchNameDisplay('xiaoming')" id="name-mode-xiaoming" class="px-2.5 py-0.5 rounded-full text-[11px] font-sans font-medium transition">
+                            Finn · 福榮
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="py-12 sm:py-20 grid grid-cols-1 lg:grid-cols-12 gap-10 items-end">
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border hairline-border text-xs font-mono" style="background-color: var(--bg-subtle); color: var(--accent);">
+                        <i class="ph-fill ph-graduation-cap"></i>
+                        <span id="hero-badge-dept">開南大學資管系 · Kainan University MIS</span>
+                    </div>
+
+                    <h1 id="hero-main-greeting" class="font-serif font-semibold text-5xl sm:text-7xl lg:text-8xl tracking-tight leading-[1.05]">
+                        我是 Finn
+                    </h1>
+
+                    <p id="hero-quote-display" class="font-serif text-xl sm:text-2xl lg:text-3xl leading-relaxed pt-2" style="color: var(--text-secondary);">
+                        「喜歡簡單生活，也喜歡認真對待每一件事。」
+                    </p>
+
+                    <div class="pt-4 flex flex-wrap items-center gap-3.5">
+                        <a href="#about" class="btn-primary-lux px-6 py-3 rounded-full text-sm font-medium inline-flex items-center gap-2">
+                            <span>探索關於我 & 個人照片</span>
+                            <i class="ph-bold ph-arrow-down-right"></i>
+                        </a>
+                        <a href="#skills" class="px-6 py-3 rounded-full text-sm font-medium border hairline-border hover:opacity-80 transition inline-flex items-center gap-2" style="background-color: var(--bg-elevated);">
+                            <i class="ph ph-code" style="color: var(--accent);"></i>
+                            <span>檢視技能（寫代碼 · 微積分）</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Minimalist Architectural Summary Box -->
+                <div class="lg:col-span-4">
+                    <div class="min-card rounded-3xl p-6 space-y-5">
+                        <div class="flex items-center justify-between border-b hairline-border pb-3">
+                            <span class="font-mono text-[11px] uppercase tracking-widest" style="color: var(--text-muted);">STUDENT PROFILE</span>
+                            <span class="font-mono text-xs font-semibold" style="color: var(--accent);">KNU · MIS</span>
+                        </div>
+                        <dl class="space-y-3 text-sm">
+                            <div class="flex justify-between py-1 border-b hairline-border">
+                                <dt style="color: var(--text-muted);">姓名</dt>
+                                <dd class="font-medium" id="summary-name">Finn (福榮)</dd>
+                            </div>
+                            <div class="flex justify-between py-1 border-b hairline-border">
+                                <dt style="color: var(--text-muted);">科系</dt>
+                                <dd class="font-medium" id="summary-dept">開南大學資管系</dd>
+                            </div>
+                            <div class="flex justify-between py-1 border-b hairline-border">
+                                <dt style="color: var(--text-muted);">我的興趣</dt>
+                                <dd class="font-medium" id="summary-interests">讀書 · 睡覺</dd>
+                            </div>
+                            <div class="flex justify-between py-1">
+                                <dt style="color: var(--text-muted);">我的技能</dt>
+                                <dd class="font-medium" id="summary-skills">寫代碼 · 微積分</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02. 關於我 (放照片 & 我的興趣) -->
+        <section id="about" class="scroll-mt-24 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b hairline-border">
+                <div class="flex items-center gap-2.5">
+                    <span class="font-mono text-xs tracking-widest uppercase" style="color: var(--accent);">02 //</span>
+                    <h2 class="font-serif text-2xl sm:text-3xl font-semibold">關於我 · About Me</h2>
+                </div>
+                <span class="font-mono text-xs" style="color: var(--text-muted);">PORTRAIT & PERSONAL INTERESTS</span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Left Column: High-Fashion Minimalist Photo Slot with File Upload (5 Cols) -->
+                <div class="lg:col-span-5">
+                    <div class="min-card rounded-3xl p-4 sm:p-5 space-y-4">
+                        <!-- Photo Frame Header -->
+                        <div class="flex items-center justify-between text-xs font-mono px-1" style="color: var(--text-muted);">
+                            <span class="flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full" style="background-color: var(--accent);"></span>
+                                PORTRAIT // 個人形象照
+                            </span>
+                            <span id="photo-filter-label">FILTER: 極簡原色</span>
+                        </div>
+
+                        <!-- Hidden File Input for selecting photo file -->
+                        <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+
+                        <!-- Interactive Photo Container (Click or Drag & Drop to Upload) -->
+                        <div id="photo-drop-zone"
+                             onclick="triggerPhotoPicker()"
+                             ondragover="handlePhotoDragOver(event)"
+                             ondragleave="handlePhotoDragLeave(event)"
+                             ondrop="handlePhotoDrop(event)"
+                             title="點擊此處選擇您的 myphoto_2.jpg 原始照片檔"
+                             class="relative aspect-square w-full rounded-2xl overflow-hidden border-2 hairline-border group cursor-pointer transition-all duration-300"
+                             style="background-color: #E2E2E2;">
+
+                            <!-- Direct Real Photo (myphoto_2.jpg / myphoto.jpg) -->
+                            <img id="profilePhoto"
+                                 src="myphoto_2.jpg"
+                                 data-path-idx="1"
+                                 onerror="handleDefaultPhotoFallback(this)"
+                                 onload="var p = document.getElementById('select-real-photo-prompt'); if (p) { p.classList.add('hidden'); p.classList.remove('flex'); }"
+                                 alt="Finn 個人照片 (myphoto_2.jpg)"
+                                 class="w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-105 photo-filter-natural">
+
+                            <!-- Clean file picker prompt if local file is not yet selected in browser sandbox -->
+                            <div id="select-real-photo-prompt" class="hidden absolute inset-0 bg-neutral-900/85 backdrop-blur-sm flex-col items-center justify-center text-center p-6 z-10">
+                                <i class="ph-duotone ph-image text-4xl mb-2" style="color: var(--accent);"></i>
+                                <p class="font-serif font-semibold text-base text-white">點擊此處載入您的原始照片 `myphoto_2.jpg`</p>
+                                <p class="font-mono text-xs text-white/70 mt-1">100% 顯示原圖 · 不使用任何 AI 生成圖</p>
+                            </div>
+
+                            <!-- Top Right File Path / Status Pill -->
+                            <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-20">
+                                <span id="photo-source-badge" class="px-2.5 py-1 rounded-full text-[10px] font-mono backdrop-blur-md bg-black/55 text-white/90 border border-white/15">
+                                    myphoto_2.jpg
+                                </span>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-mono backdrop-blur-md bg-black/55 text-amber-300 border border-amber-400/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    點擊或拖曳原圖至此
+                                </span>
+                            </div>
+
+                            <!-- Drag & Drop Active Overlay -->
+                            <div id="photo-drag-overlay" class="hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex-col items-center justify-center text-center p-6 border-2 border-dashed border-amber-400 rounded-2xl z-30 pointer-events-none">
+                                <i class="ph-duotone ph-upload-simple text-4xl text-amber-400 mb-2 animate-bounce"></i>
+                                <p class="font-serif font-bold text-lg text-white">放開滑鼠即可直接顯示您的原圖檔案</p>
+                                <p class="font-mono text-xs text-white/70 mt-1">100% 原始照片呈現</p>
+                            </div>
+
+                            <!-- Subtle Editorial Overlay Badge -->
+                            <div class="absolute bottom-3 left-3 right-3 p-3.5 rounded-xl backdrop-blur-md border border-white/20 bg-black/60 text-white flex items-center justify-between gap-2 z-20">
+                                <div>
+                                    <p class="font-serif font-semibold text-sm" id="photo-caption-name">Finn · 開南大學資管系</p>
+                                    <p class="font-mono text-[10px] text-white/75" id="photo-caption-dept">KNU MIS · 原圖直出</p>
+                                </div>
+                                <button type="button"
+                                        onclick="event.stopPropagation(); triggerPhotoPicker();"
+                                        class="px-3.5 py-2 rounded-xl bg-white text-black font-sans font-semibold text-xs hover:bg-amber-200 transition flex items-center gap-1.5 shadow-md shrink-0">
+                                    <i class="ph-bold ph-folder-open"></i>
+                                    <span>選擇原圖</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Prominent File Upload Action Button -->
+                        <div class="pt-1">
+                            <button type="button"
+                                    onclick="triggerPhotoPicker()"
+                                    class="btn-primary-lux w-full py-3 px-4 rounded-2xl text-xs font-medium flex items-center justify-center gap-2 shadow-sm">
+                                <i class="ph-bold ph-upload-simple text-sm"></i>
+                                <span>📂 選擇您的原始照片檔 (myphoto_2.jpg / myphoto.jpg)</span>
+                            </button>
+                        </div>
+
+                        <!-- Photo Filter & Reset Controls -->
+                        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" onclick="setPhotoFilter('natural', '極簡原色')" class="px-2.5 py-1 rounded-lg text-xs border hairline-border hover:opacity-80 transition">極簡原色</button>
+                                <button type="button" onclick="setPhotoFilter('bw', '雜誌黑白')" class="px-2.5 py-1 rounded-lg text-xs border hairline-border hover:opacity-80 transition">雜誌黑白</button>
+                                <button type="button" onclick="setPhotoFilter('warm', '香檳暖調')" class="px-2.5 py-1 rounded-lg text-xs border hairline-border hover:opacity-80 transition">香檳暖調</button>
+                            </div>
+                            <button type="button" onclick="resetProfilePhoto()" class="text-xs font-mono underline hover:opacity-75 transition flex items-center gap-1" style="color: var(--accent);">
+                                <i class="ph ph-arrow-counter-clockwise"></i> 重置圖片
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Narrative & Interactive Interests (7 Cols) -->
+                <div class="lg:col-span-7 space-y-6">
+                    <!-- Self Introduction Card -->
+                    <div class="min-card rounded-3xl p-6 sm:p-8 space-y-5">
+                        <span class="font-mono text-xs uppercase tracking-widest" style="color: var(--accent);">PHILOSOPHY // 一句話介紹自己</span>
+                        <blockquote id="about-quote-main" class="font-serif text-2xl sm:text-3xl font-semibold leading-snug">
+                            「喜歡簡單生活，也喜歡認真對待每一件事。」
+                        </blockquote>
+                        <p class="text-sm sm:text-base leading-relaxed" style="color: var(--text-secondary);">
+                            我是 <strong class="font-medium" style="color: var(--text-primary);" id="about-inline-name">Finn (福榮)</strong>，目前就讀於<strong class="font-medium" style="color: var(--text-primary);" id="about-inline-dept">開南大學資訊管理學系（KNU MIS）</strong>。在學習與生活中，我奉行極簡主義：剔除不必要的繁雜，把時間留給真正重要的事情——專注寫好每一行代碼、推導每一道微積分公式，並在書本與充足的睡眠中保持清晰的思緒。
+                        </p>
+                    </div>
+
+                    <!-- My Interests Grid: 讀書 & 睡覺 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Interest 01: 讀書 (Reading) -->
+                        <div class="min-card rounded-3xl p-6 flex flex-col justify-between space-y-5">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-mono text-xs" style="color: var(--accent);">INTEREST 01</span>
+                                    <i class="ph-duotone ph-book-open-text text-2xl" style="color: var(--accent);"></i>
+                                </div>
+                                <h3 class="font-serif text-2xl font-semibold">讀書 · Reading</h3>
+                                <p id="reading-quote-box" class="text-xs sm:text-sm leading-relaxed min-h-[60px]" style="color: var(--text-secondary);">
+                                    「少即是多（Less is More）—— 當生活足夠簡單，每一分專注都會產生複利。」
+                                </p>
+                            </div>
+                            <div class="pt-2 border-t hairline-border flex items-center justify-between">
+                                <span class="font-mono text-[11px]" style="color: var(--text-muted);">極簡閱讀筆記</span>
+                                <button type="button" onclick="nextReadingQuote()" class="text-xs font-mono flex items-center gap-1 hover:opacity-80 transition" style="color: var(--accent);">
+                                    <span>翻開下一頁</span>
+                                    <i class="ph-bold ph-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Interest 02: 睡覺 (Sleeping / Deep Rest) -->
+                        <div class="min-card rounded-3xl p-6 flex flex-col justify-between space-y-5">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-mono text-xs" style="color: var(--accent);">INTEREST 02</span>
+                                    <i id="sleep-icon" class="ph-duotone ph-moon-stars text-2xl transition-transform duration-500" style="color: var(--accent);"></i>
+                                </div>
+                                <h3 class="font-serif text-2xl font-semibold">睡覺 · Deep Rest</h3>
+                                <p id="sleep-status-text" class="text-xs sm:text-sm leading-relaxed min-h-[60px]" style="color: var(--text-secondary);">
+                                    高品質的睡眠是高效思考與寫代碼的基石。讓大腦進入深層修復，醒來後以 100% 能量認真對待每一件事。
+                                </p>
+                            </div>
+                            <div class="pt-2 border-t hairline-border flex items-center justify-between">
+                                <span class="font-mono text-[11px]" id="sleep-energy-badge" style="color: var(--text-muted);">ENERGY: 100% RECHARGED</span>
+                                <button type="button" onclick="toggleSleepRecharge()" class="text-xs font-mono flex items-center gap-1 hover:opacity-80 transition" style="color: var(--accent);">
+                                    <i class="ph-bold ph-sparkle"></i>
+                                    <span>深眠充電模式</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03. 技能 (寫代碼 · 微積分) -->
+        <section id="skills" class="scroll-mt-24 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b hairline-border">
+                <div class="flex items-center gap-2.5">
+                    <span class="font-mono text-xs tracking-widest uppercase" style="color: var(--accent);">03 //</span>
+                    <h2 class="font-serif text-2xl sm:text-3xl font-semibold">專業技能 · Core Skills</h2>
+                </div>
+                <span class="font-mono text-xs" style="color: var(--text-muted);">CODING & CALCULUS INTERACTIVE LAB</span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Skill 01: 寫代碼 (Interactive Code Runner) -->
+                <div class="lg:col-span-6 min-card rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-6">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono text-xs px-2.5 py-1 rounded-full border hairline-border" style="background-color: var(--bg-subtle); color: var(--accent);">SKILL 01 // 寫代碼</span>
+                            <span class="font-mono text-xs" style="color: var(--text-muted);">JavaScript / Python / MIS</span>
+                        </div>
+                        <h3 class="font-serif text-2xl sm:text-3xl font-semibold">寫代碼 · Clean Code</h3>
+                        <p class="text-xs sm:text-sm leading-relaxed" style="color: var(--text-secondary);">
+                            如同極簡主義的生活態度，追求高可讀性、結構嚴謹且零冗餘的程式邏輯。點擊下方「執行代碼 Run」可即時編譯個人哲學函式：
+                        </p>
+                    </div>
+
+                    <!-- Minimalist Interactive Code Terminal -->
+                    <div class="rounded-2xl border hairline-border overflow-hidden" style="background-color: #08080A;">
+                        <div class="px-4 py-2.5 border-b hairline-border flex items-center justify-between bg-white/[0.02]">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-400/80"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></span>
+                                <span class="ml-2 font-mono text-[11px] text-white/60">finn_mindset.js</span>
+                            </div>
+                            <button type="button" onclick="runStudentCode()" class="px-3 py-1 rounded-lg text-xs font-mono font-semibold flex items-center gap-1.5 transition hover:scale-105" style="background-color: var(--accent); color: #000;">
+                                <i class="ph-fill ph-play"></i>
+                                <span>執行代碼 Run</span>
+                            </button>
+                        </div>
+
+                        <pre class="p-4 text-xs font-mono leading-relaxed overflow-x-auto text-emerald-100/90"><code><span class="text-amber-300">const</span> student = {
+  name: <span class="text-emerald-300">"Finn (福榮)"</span>,
+  dept: <span class="text-emerald-300">"開南大學資管系"</span>,
+  interests: [<span class="text-emerald-300">"讀書"</span>, <span class="text-emerald-300">"睡覺"</span>],
+  skills: [<span class="text-emerald-300">"寫代碼"</span>, <span class="text-emerald-300">"微積分"</span>],
+  liveSimply() {
+    <span class="text-amber-300">return</span> <span class="text-emerald-300">"喜歡簡單生活，也喜歡認真對待每一件事。"</span>;
+  }
+};</code></pre>
+
+                        <div id="code-console-output" class="px-4 py-3 border-t hairline-border font-mono text-xs bg-white/[0.03] text-white/80 flex items-center justify-between">
+                            <span>&gt; Ready. 點擊上方「執行代碼 Run」檢視輸出結果...</span>
+                            <span class="text-[10px] text-emerald-400">0ms</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill 02: 微積分 (Interactive Riemann Sum & Calculus Visualizer) -->
+                <div class="lg:col-span-6 min-card rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-6">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono text-xs px-2.5 py-1 rounded-full border hairline-border" style="background-color: var(--bg-subtle); color: var(--accent);">SKILL 02 // 微積分</span>
+                            <span class="font-mono text-xs" style="color: var(--text-muted);">$\int_{a}^{b} f(x)\,dx$ · 數學建模</span>
+                        </div>
+                        <h3 class="font-serif text-2xl sm:text-3xl font-semibold">微積分 · Calculus</h3>
+                        <p class="text-xs sm:text-sm leading-relaxed" style="color: var(--text-secondary);">
+                            微積分教會我：當分割數量 $n \to \infty$，每一個微小的認真累積，最終都會收斂成精確而完美的結果。拖曳下方滑桿體驗互動黎曼和：
+                        </p>
+                    </div>
+
+                    <!-- Interactive Calculus Riemann Sum & Tangent Visualizer -->
+                    <div class="p-4 sm:p-5 rounded-2xl border hairline-border space-y-4" style="background-color: var(--bg-subtle);">
+                        <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="font-mono font-bold" style="color: var(--accent);">互動黎曼和積分視覺化</span>
+                                <span class="font-mono text-[11px]" style="color: var(--text-muted);">n = <strong id="calc-n-label">16</strong> 分割矩形</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="inline-flex rounded-lg p-0.5 border hairline-border text-[10px] font-mono" style="background-color: var(--bg-elevated);">
+                                    <button type="button" onclick="setCalcFunc('wave')" id="calc-fn-wave" class="px-2 py-0.5 rounded-md transition" style="background-color: var(--accent); color: #000;">sin 波動</button>
+                                    <button type="button" onclick="setCalcFunc('poly')" id="calc-fn-poly" class="px-2 py-0.5 rounded-md transition">二次曲線</button>
+                                    <button type="button" onclick="setCalcFunc('exp')" id="calc-fn-exp" class="px-2 py-0.5 rounded-md transition">指數成長</button>
+                                </div>
+                                <span class="font-mono text-xs" id="calc-area-output" style="color: var(--text-primary);">
+                                    面積 ≈ <strong>4.621</strong>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- HTML5 Canvas for Calculus Visualization -->
+                        <div class="relative w-full h-44 rounded-xl overflow-hidden border hairline-border" style="background-color: var(--bg-main);">
+                            <canvas id="calculus-canvas" class="w-full h-full block"></canvas>
+                        </div>
+
+                        <!-- Slider Control for Partition n -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between text-[11px] font-mono" style="color: var(--text-secondary);">
+                                <span>調整分割精細度 $n$ (4 → 80)</span>
+                                <span id="calc-insight-text" style="color: var(--accent);">細膩逼近 (n = 16)：認真對待每一個微小細節</span>
+                            </div>
+                            <input type="range" id="calc-n-slider" min="4" max="80" value="16" oninput="updateCalculusCanvas()" class="w-full cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 04. 聯繫方式 (Email · Line · Instagram) -->
+        <section id="contact" class="scroll-mt-24 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b hairline-border">
+                <div class="flex items-center gap-2.5">
+                    <span class="font-mono text-xs tracking-widest uppercase" style="color: var(--accent);">04 //</span>
+                    <h2 class="font-serif text-2xl sm:text-3xl font-semibold">聯繫方式 · Contact</h2>
+                </div>
+                <span class="font-mono text-xs" style="color: var(--text-muted);">EMAIL · LINE · INSTAGRAM</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Email Card -->
+                <div class="min-card rounded-3xl p-6 flex flex-col justify-between space-y-6">
+                    <div class="space-y-3">
+                        <div class="w-11 h-11 rounded-2xl flex items-center justify-center border hairline-border" style="background-color: var(--bg-subtle); color: var(--accent);">
+                            <i class="ph-duotone ph-envelope-simple text-2xl"></i>
+                        </div>
+                        <span class="font-mono text-xs uppercase tracking-widest block" style="color: var(--text-muted);">01 // EMAIL</span>
+                        <h3 class="font-serif text-2xl font-semibold">電子郵件</h3>
+                        <p id="contact-email-text" class="font-mono text-xs sm:text-sm break-all" style="color: var(--text-secondary);">
+                            phuocvinh2772005@gmail.com
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 pt-2 border-t hairline-border">
+                        <button type="button" onclick="copyTextValue(studentData.email, '已複製 Email 地址！')" class="btn-primary-lux flex-1 py-2.5 px-3 rounded-xl text-xs font-medium flex items-center justify-center gap-1.5">
+                            <i class="ph-bold ph-copy"></i>
+                            <span>複製信箱</span>
+                        </button>
+                        <a id="contact-email-mailto" href="mailto:phuocvinh2772005@gmail.com" class="py-2.5 px-3 rounded-xl text-xs font-mono border hairline-border hover:opacity-80 transition">
+                            寄信
+                        </a>
+                    </div>
+                </div>
+
+                <!-- LINE Card -->
+                <div class="min-card rounded-3xl p-6 flex flex-col justify-between space-y-6">
+                    <div class="space-y-3">
+                        <div class="w-11 h-11 rounded-2xl flex items-center justify-center border hairline-border" style="background-color: var(--bg-subtle); color: var(--accent);">
+                            <i class="ph-duotone ph-chat-circle-dots text-2xl"></i>
+                        </div>
+                        <span class="font-mono text-xs uppercase tracking-widest block" style="color: var(--text-muted);">02 // LINE</span>
+                        <h3 class="font-serif text-2xl font-semibold">Line 即時聯繫</h3>
+                        <p class="font-mono text-xs sm:text-sm" style="color: var(--text-secondary);">
+                            LINE ID: <span id="contact-line-text" class="font-semibold" style="color: var(--text-primary);">phuocvinh277</span>
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 pt-2 border-t hairline-border">
+                        <button type="button" onclick="copyTextValue(studentData.lineId, '已複製 LINE ID！')" class="btn-primary-lux flex-1 py-2.5 px-3 rounded-xl text-xs font-medium flex items-center justify-center gap-1.5">
+                            <i class="ph-bold ph-copy"></i>
+                            <span>複製 LINE ID</span>
+                        </button>
+                        <button type="button" onclick="openQrModal('LINE')" class="py-2.5 px-3 rounded-xl text-xs font-mono border hairline-border hover:opacity-80 transition flex items-center gap-1">
+                            <i class="ph ph-qr-code"></i> QR
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Instagram Card -->
+                <div class="min-card rounded-3xl p-6 flex flex-col justify-between space-y-6">
+                    <div class="space-y-3">
+                        <div class="w-11 h-11 rounded-2xl flex items-center justify-center border hairline-border" style="background-color: var(--bg-subtle); color: var(--accent);">
+                            <i class="ph-duotone ph-instagram-logo text-2xl"></i>
+                        </div>
+                        <span class="font-mono text-xs uppercase tracking-widest block" style="color: var(--text-muted);">03 // INSTAGRAM</span>
+                        <h3 class="font-serif text-2xl font-semibold">Instagram</h3>
+                        <p id="contact-ig-text" class="font-mono text-xs sm:text-sm" style="color: var(--text-secondary);">
+                            @phuocvinh_277
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 pt-2 border-t hairline-border">
+                        <button type="button" onclick="copyTextValue(studentData.igHandle, '已複製 Instagram 帳號！')" class="btn-primary-lux flex-1 py-2.5 px-3 rounded-xl text-xs font-medium flex items-center justify-center gap-1.5">
+                            <i class="ph-bold ph-copy"></i>
+                            <span>複製 IG 帳號</span>
+                        </button>
+                        <button type="button" onclick="openQrModal('Instagram')" class="py-2.5 px-3 rounded-xl text-xs font-mono border hairline-border hover:opacity-80 transition flex items-center gap-1">
+                            <i class="ph ph-qr-code"></i> 名片
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t hairline-border py-10">
+        <div class="max-w-6xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono" style="color: var(--text-muted);">
+            <div>
+                © 2026 FINN (福榮) · 開南大學資管系 (KNU MIS). ALL RIGHTS RESERVED.
+            </div>
+            <div class="flex items-center gap-4">
+                <span>MINIMALIST LUXURY EDITION</span>
+                <a href="#home" class="hover:underline" style="color: var(--accent);">BACK TO TOP ↑</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+        <div class="min-card w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b hairline-border pb-3">
+                <h3 class="font-serif text-2xl font-semibold">編輯個人網站資料</h3>
+                <button type="button" onclick="closeEditModal()" class="w-8 h-8 rounded-full flex items-center justify-center border hairline-border hover:opacity-75">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-mono mb-1" style="color: var(--text-secondary);">主視覺標題 (首頁打招呼)</label>
+                    <input type="text" id="input-hero-title" class="w-full px-3.5 py-2 rounded-xl border hairline-border bg-black/40 text-white" value="我是 Finn">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-mono mb-1" style="color: var(--text-secondary);">姓名</label>
+                        <input type="text" id="input-name" class="w-full px-3.5 py-2 rounded-xl border hairline-border bg-black/40 text-white" value="Finn">
+                    </div>
+                    <div>
+                        <label class="block font-mono mb-1" style="color: var(--text-secondary);">科系</label>
+                        <input type="text" id="input-dept" class="w-full px-3.5 py-2 rounded-xl border hairline-border bg-black/40 text-white" value="開南大學資管系">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-mono mb-1" style="color: var(--text-secondary);">一句話介紹自己</label>
+                    <input type="text" id="input-quote" class="w-full px-3.5 py-2 rounded-xl border hairline-border bg-black/40 text-white" value="喜歡簡單生活，也喜歡認真對待每一件事。">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-mono mb-1" style="color: var(--text-secondary);">Email</label>
+                        <input type="email" id="input-email" class="w-full px-3.5 py-2 rounded-xl border hairline-border bg-black/40 text-white" value="phuocvinh2772005@gmail.com">
+                    </div>
+                    <div>
+                        <label class="block font-mono mb-1" style="color: var(--text-secondary);">LINE ID</label>
+                        <input type="text" id="input-line" class="w-full px-3.5 py-2 rounded-xl border hairline-border bg-black/40 text-white" value="phuocvinh277">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-mono mb-1" style="color: var(--text-secondary);">Instagram 帳號</label>
+                    <input type="text" id="input-ig" class="w-full px-3.5 py-2 rounded-xl border hairline-border bg-black/40 text-white" value="@phuocvinh_277">
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-3 border-t hairline-border">
+                <button type="button" onclick="closeEditModal()" class="px-4 py-2 rounded-xl text-xs border hairline-border">取消</button>
+                <button type="button" onclick="saveProfileEdits()" class="btn-primary-lux px-5 py-2 rounded-xl text-xs font-semibold">儲存並更新全站</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Digital QR Card Modal -->
+    <div id="qr-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+        <div class="min-card w-full max-w-sm rounded-3xl p-6 text-center space-y-4">
+            <div class="flex items-center justify-between">
+                <span id="qr-modal-platform" class="font-mono text-xs uppercase tracking-widest" style="color: var(--accent);">DIGITAL CARD</span>
+                <button type="button" onclick="closeQrModal()" class="w-8 h-8 rounded-full flex items-center justify-center border hairline-border">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="w-44 h-44 mx-auto rounded-2xl p-4 bg-white flex items-center justify-center">
+                <svg viewBox="0 0 100 100" class="w-full h-full text-black fill-current">
+                    <rect x="8" y="8" width="26" height="26" rx="4" fill="none" stroke="currentColor" stroke-width="6"/>
+                    <rect x="16" y="16" width="10" height="10" rx="2"/>
+                    <rect x="66" y="8" width="26" height="26" rx="4" fill="none" stroke="currentColor" stroke-width="6"/>
+                    <rect x="74" y="16" width="10" height="10" rx="2"/>
+                    <rect x="8" y="66" width="26" height="26" rx="4" fill="none" stroke="currentColor" stroke-width="6"/>
+                    <rect x="16" y="74" width="10" height="10" rx="2"/>
+                    <rect x="44" y="12" width="10" height="10" rx="2"/>
+                    <rect x="44" y="30" width="12" height="12" rx="2"/>
+                    <rect x="14" y="44" width="14" height="10" rx="2"/>
+                    <rect x="38" y="48" width="22" height="12" rx="2"/>
+                    <rect x="68" y="44" width="18" height="10" rx="2"/>
+                    <rect x="44" y="68" width="12" height="20" rx="2"/>
+                    <rect x="64" y="66" width="24" height="12" rx="2"/>
+                    <rect x="68" y="82" width="16" height="10" rx="2"/>
+                </svg>
+            </div>
+            <div>
+                <p class="font-serif text-xl font-semibold">Finn (福榮)</p>
+                <p id="qr-modal-handle" class="font-mono text-xs mt-1" style="color: var(--text-secondary);">phuocvinh277</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-box" class="fixed bottom-5 right-5 z-50 pointer-events-none opacity-0 translate-y-3 transition-all duration-300">
+        <div class="px-4 py-3 rounded-2xl border hairline-border backdrop-blur-xl shadow-2xl flex items-center gap-2.5 text-xs font-mono" style="background-color: var(--bg-elevated); color: var(--text-primary);">
+            <i class="ph-fill ph-check-circle text-base" style="color: var(--accent);"></i>
+            <span id="toast-message">操作成功</span>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_DATA = {
+            heroTitle: "我是 Finn",
+            studentName: "Finn",
+            department: "開南大學資管系",
+            quote: "喜歡簡單生活，也喜歡認真對待每一件事。",
+            interests: "讀書 · 睡覺",
+            skills: "寫代碼 · 微積分",
+            email: "phuocvinh2772005@gmail.com",
+            lineId: "phuocvinh277",
+            igHandle: "@phuocvinh_277"
+        };
+
+        let studentData = { ...DEFAULT_DATA };
+        let currentNameMode = 'both';
+        let currentCalcFunc = 'wave';
+
+        const READING_QUOTES = [
+            "「少即是多（Less is More）—— 當生活足夠簡單，每一分專注都會產生複利。」",
+            "「讀書不是為了記住每一行字，而是為了讓思考擁有更清晰的邊界與自由。」",
+            "「把簡單的事情做到極致，本身就是一種最純粹的才華。」",
+            "「在安靜的書頁裡整理思緒，在醒著的每一刻認真對待生活。」"
+        ];
+        let quoteIdx = 0;
+        let sleepModeActive = false;
+
+        function showToast(message) {
+            const box = document.getElementById('toast-box');
+            const msgEl = document.getElementById('toast-message');
+            if (!box || !msgEl) return;
+            msgEl.textContent = message;
+            box.classList.remove('opacity-0', 'translate-y-3');
+            box.classList.add('opacity-100', 'translate-y-0');
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => {
+                box.classList.add('opacity-0', 'translate-y-3');
+                box.classList.remove('opacity-100', 'translate-y-0');
+            }, 2600);
+        }
+
+        function triggerPhotoPicker() {
+            const input = document.getElementById('photoInput');
+            if (input) input.click();
+        }
+
+        function applyUploadedPhotoFile(file) {
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                showToast('請選擇圖片格式檔案（JPG / PNG / WEBP）！');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                const img = document.getElementById('profilePhoto');
+                if (img) {
+                    img.src = dataUrl;
+                }
+                const badge = document.getElementById('photo-source-badge');
+                if (badge) {
+                    badge.textContent = '📂 ' + file.name;
+                }
+                try {
+                    localStorage.setItem(PHOTO_STORAGE_KEY, dataUrl);
+                } catch (err) {
+                    // Ignore storage quota errors for very large raw images
+                }
+                showToast('已成功放上您的照片檔案：' + file.name);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handlePhotoUpload(event) {
+            const file = event.target.files && event.target.files[0];
+            if (file) {
+                applyUploadedPhotoFile(file);
+            }
+        }
+
+        function handlePhotoDragOver(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const zone = document.getElementById('photo-drop-zone');
+            const overlay = document.getElementById('photo-drag-overlay');
+            if (zone) zone.style.borderColor = 'var(--accent)';
+            if (overlay) {
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+            }
+        }
+
+        function handlePhotoDragLeave(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const zone = document.getElementById('photo-drop-zone');
+            const overlay = document.getElementById('photo-drag-overlay');
+            if (zone) zone.style.borderColor = 'var(--border-hairline)';
+            if (overlay) {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }
+        }
+
+        function handlePhotoDrop(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            handlePhotoDragLeave(event);
+            const files = event.dataTransfer && event.dataTransfer.files;
+            if (files && files.length > 0) {
+                applyUploadedPhotoFile(files[0]);
+            }
+        }
+
+        function setPhotoFilter(filterType, label) {
+            const img = document.getElementById('profilePhoto');
+            if (!img) return;
+            img.classList.remove('photo-filter-natural', 'photo-filter-bw', 'photo-filter-warm');
+            img.classList.add('photo-filter-' + filterType);
+            const labelEl = document.getElementById('photo-filter-label');
+            if (labelEl) labelEl.textContent = 'FILTER: ' + label;
+            showToast('已套用濾鏡：' + label);
+        }
+
+        function resetProfilePhoto() {
+            try {
+                localStorage.removeItem(PHOTO_STORAGE_KEY);
+            } catch (e) {}
+            const input = document.getElementById('photoInput');
+            if (input) input.value = '';
+            const img = document.getElementById('profilePhoto');
+            if (img) {
+                img.setAttribute('data-path-idx', '1');
+                img.onerror = function() { window.handleDefaultPhotoFallback(this); };
+                img.src = 'myphoto_2.jpg';
+            }
+            const badge = document.getElementById('photo-source-badge');
+            if (badge) badge.textContent = 'myphoto_2.jpg';
+            setPhotoFilter('natural', '極簡原色');
+            showToast('已重置為原始照片 myphoto_2.jpg！');
+        }
+
+        function switchNameDisplay(mode) {
+            currentNameMode = mode;
+            const modes = ['both', 'furong', 'xiaoming'];
+            modes.forEach(m => {
+                const btn = document.getElementById('name-mode-' + m);
+                if (!btn) return;
+                if (m === mode) {
+                    btn.style.backgroundColor = 'var(--text-primary)';
+                    btn.style.color = 'var(--bg-main)';
+                } else {
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.color = 'var(--text-secondary)';
+                }
+            });
+
+            const heading = document.getElementById('hero-main-greeting');
+            if (!heading) return;
+            if (mode === 'furong') {
+                heading.innerHTML = '我是福榮';
+            } else if (mode === 'xiaoming') {
+                heading.innerHTML = studentData.studentName + ' <span class="font-light text-3xl sm:text-5xl opacity-65">· 福榮</span>';
+            } else {
+                heading.innerHTML = studentData.heroTitle;
+            }
+        }
+
+        function nextReadingQuote() {
+            quoteIdx = (quoteIdx + 1) % READING_QUOTES.length;
+            const box = document.getElementById('reading-quote-box');
+            if (box) {
+                box.textContent = READING_QUOTES[quoteIdx];
+            }
+            showToast('已切換極簡閱讀書摘 (' + (quoteIdx + 1) + '/' + READING_QUOTES.length + ')');
+        }
+
+        function toggleSleepRecharge() {
+            sleepModeActive = !sleepModeActive;
+            const statusText = document.getElementById('sleep-status-text');
+            const badge = document.getElementById('sleep-energy-badge');
+            const icon = document.getElementById('sleep-icon');
+            if (sleepModeActive) {
+                if (statusText) statusText.textContent = '🌙 深眠微光模式啟動中：放下手機與雜訊，讓身心完全沉澱，為明天的微積分與程式開發儲備滿格專注力。';
+                if (badge) badge.textContent = 'SLEEP MODE: DEEP RESTING...';
+                if (icon) icon.classList.add('rotate-12', 'scale-110');
+                showToast('已啟動「深眠微光充電模式」🌙');
+            } else {
+                if (statusText) statusText.textContent = '高品質的睡眠是高效思考與寫代碼的基石。讓大腦進入深層修復，醒來後以 100% 能量認真對待每一件事。';
+                if (badge) badge.textContent = 'ENERGY: 100% RECHARGED';
+                if (icon) icon.classList.remove('rotate-12', 'scale-110');
+                showToast('睡眠充電完成！能量 100% 滿格 ⚡');
+            }
+        }
+
+        function runStudentCode() {
+            const out = document.getElementById('code-console-output');
+            if (!out) return;
+            out.innerHTML = '<span class="text-amber-300">&gt; 執行成功：' + studentData.studentName + ' (' + studentData.department + ') — 「' + studentData.quote + '」</span><span class="text-[10px] text-emerald-400">1.2ms</span>';
+            showToast('代碼執行完畢：輸出個人核心理念！');
+        }
+
+        function setCalcFunc(fnType) {
+            currentCalcFunc = fnType;
+            ['wave', 'poly', 'exp'].forEach(type => {
+                const btn = document.getElementById('calc-fn-' + type);
+                if (!btn) return;
+                if (type === fnType) {
+                    btn.style.backgroundColor = 'var(--accent)';
+                    btn.style.color = '#000';
+                } else {
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.color = 'var(--text-secondary)';
+                }
+            });
+            updateCalculusCanvas();
+        }
+
+        function updateCalculusCanvas() {
+            const canvas = document.getElementById('calculus-canvas');
+            if (!canvas) return;
+            const slider = document.getElementById('calc-n-slider');
+            const n = parseInt(slider ? slider.value : 16, 10);
+
+            const nLabel = document.getElementById('calc-n-label');
+            if (nLabel) nLabel.textContent = n;
+
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+
+            const w = rect.width;
+            const h = rect.height;
+            const padX = 28;
+            const padY = 24;
+            const plotW = w - padX * 2;
+            const plotH = h - padY * 2;
+
+            ctx.clearRect(0, 0, w, h);
+
+            const styles = getComputedStyle(document.documentElement);
+            const accentColor = styles.getPropertyValue('--accent').trim() || '#D4AF37';
+            const textColor = styles.getPropertyValue('--text-primary').trim() || '#F5F3EE';
+            const mutedColor = styles.getPropertyValue('--border-hairline').trim() || 'rgba(255,255,255,0.1)';
+
+            const a = 0;
+            const b = 4;
+            const f = (x) => {
+                if (currentCalcFunc === 'poly') {
+                    return 0.22 + 0.18 * x - 0.03 * x * x + 0.015 * x * x * x;
+                } else if (currentCalcFunc === 'exp') {
+                    return 0.18 * Math.exp(0.38 * x);
+                }
+                return 0.45 + 0.32 * Math.sin(x * 1.4) + 0.06 * x;
+            };
+
+            ctx.beginPath();
+            ctx.moveTo(padX, padY);
+            ctx.lineTo(padX, h - padY);
+            ctx.lineTo(w - padX, h - padY);
+            ctx.strokeStyle = mutedColor;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            const dx = (b - a) / n;
+            let riemannSum = 0;
+
+            for (let i = 0; i < n; i++) {
+                const xMid = a + (i + 0.5) * dx;
+                const yVal = f(xMid);
+                riemannSum += yVal * dx;
+
+                const px = padX + (i / n) * plotW;
+                const pw = (plotW / n);
+                const ph = yVal * plotH;
+                const py = (h - padY) - ph;
+
+                ctx.fillStyle = accentColor + '2E';
+                ctx.fillRect(px, py, Math.max(pw - 1, 1), ph);
+
+                ctx.strokeStyle = accentColor + '77';
+                ctx.lineWidth = 0.8;
+                ctx.strokeRect(px, py, Math.max(pw - 1, 1), ph);
+            }
+
+            ctx.beginPath();
+            for (let px = 0; px <= plotW; px += 2) {
+                const x = a + (px / plotW) * (b - a);
+                const y = f(x);
+                const cx = padX + px;
+                const cy = (h - padY) - y * plotH;
+                if (px === 0) ctx.moveTo(cx, cy);
+                else ctx.lineTo(cx, cy);
+            }
+            ctx.strokeStyle = textColor;
+            ctx.lineWidth = 2.2;
+            ctx.stroke();
+
+            const displayArea = (riemannSum * 2.15).toFixed(3);
+            const areaOut = document.getElementById('calc-area-output');
+            if (areaOut) areaOut.innerHTML = '面積 ≈ <strong>' + displayArea + '</strong>';
+
+            const insight = document.getElementById('calc-insight-text');
+            if (insight) {
+                if (n < 16) {
+                    insight.textContent = '基礎分割 (n = ' + n + ')：一步一腳印打下基礎';
+                } else if (n < 50) {
+                    insight.textContent = '細膩逼近 (n = ' + n + ')：認真對待每一個微小細節';
+                } else {
+                    insight.textContent = '極限收斂 (n = ' + n + ' → ∞)：簡單的事情做到極致即是完美';
+                }
+            }
+        }
+
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            ['obsidian', 'emerald', 'sapphire'].forEach(t => {
+                const btn = document.getElementById('theme-' + t);
+                if (!btn) return;
+                if (t === themeName) {
+                    btn.classList.remove('opacity-50');
+                    btn.classList.add('ring-2', 'scale-110');
+                } else {
+                    btn.classList.add('opacity-50');
+                    btn.classList.remove('ring-2', 'scale-110');
+                }
+            });
+            updateCalculusCanvas();
+            const labels = {
+                obsidian: 'Obsidian Gold (黑曜流金)',
+                emerald: 'Emerald Titanium (翡翠鈦金)',
+                sapphire: 'Royal Sapphire (皇家藍寶)'
+            };
+            showToast('已切換 $10k 主題：' + labels[themeName]);
+        }
+
+        function copyTextValue(text, msg) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast(msg || '已複製到剪貼簿！');
+            } catch (e) {
+                showToast('複製失敗，請手動選取複製');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function openEditModal() {
+            const modal = document.getElementById('edit-modal');
+            if (!modal) return;
+            document.getElementById('input-hero-title').value = studentData.heroTitle;
+            document.getElementById('input-name').value = studentData.studentName;
+            document.getElementById('input-dept').value = studentData.department;
+            document.getElementById('input-quote').value = studentData.quote;
+            document.getElementById('input-email').value = studentData.email;
+            document.getElementById('input-line').value = studentData.lineId;
+            document.getElementById('input-ig').value = studentData.igHandle;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('edit-modal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function applyStudentDataToDOM() {
+            const navName = document.getElementById('nav-student-name');
+            if (navName) navName.textContent = studentData.studentName + ' · 福榮';
+
+            const navDept = document.getElementById('nav-student-dept');
+            if (navDept) navDept.textContent = 'KNU MIS · ' + studentData.department;
+
+            const heroDept = document.getElementById('hero-badge-dept');
+            if (heroDept) heroDept.textContent = studentData.department + ' · Kainan University MIS';
+
+            const heroQuote = document.getElementById('hero-quote-display');
+            if (heroQuote) heroQuote.textContent = '「' + studentData.quote + '」';
+
+            const sumName = document.getElementById('summary-name');
+            if (sumName) sumName.textContent = studentData.studentName + ' (福榮)';
+
+            const sumDept = document.getElementById('summary-dept');
+            if (sumDept) sumDept.textContent = studentData.department;
+
+            const capName = document.getElementById('photo-caption-name');
+            if (capName) capName.textContent = studentData.studentName + ' · ' + studentData.department;
+
+            const aboutQuote = document.getElementById('about-quote-main');
+            if (aboutQuote) aboutQuote.textContent = '「' + studentData.quote + '」';
+
+            const aboutName = document.getElementById('about-inline-name');
+            if (aboutName) aboutName.textContent = studentData.studentName + ' (福榮)';
+
+            const aboutDept = document.getElementById('about-inline-dept');
+            if (aboutDept) aboutDept.textContent = studentData.department;
+
+            const emailText = document.getElementById('contact-email-text');
+            if (emailText) emailText.textContent = studentData.email;
+
+            const emailMailto = document.getElementById('contact-email-mailto');
+            if (emailMailto) emailMailto.href = 'mailto:' + studentData.email;
+
+            const lineText = document.getElementById('contact-line-text');
+            if (lineText) lineText.textContent = studentData.lineId;
+
+            const igText = document.getElementById('contact-ig-text');
+            if (igText) igText.textContent = studentData.igHandle;
+
+            switchNameDisplay(currentNameMode);
+        }
+
+        function saveProfileEdits() {
+            studentData.heroTitle = document.getElementById('input-hero-title').value.trim() || DEFAULT_DATA.heroTitle;
+            studentData.studentName = document.getElementById('input-name').value.trim() || DEFAULT_DATA.studentName;
+            studentData.department = document.getElementById('input-dept').value.trim() || DEFAULT_DATA.department;
+            studentData.quote = document.getElementById('input-quote').value.trim() || DEFAULT_DATA.quote;
+            studentData.email = document.getElementById('input-email').value.trim() || DEFAULT_DATA.email;
+            studentData.lineId = document.getElementById('input-line').value.trim() || DEFAULT_DATA.lineId;
+            studentData.igHandle = document.getElementById('input-ig').value.trim() || DEFAULT_DATA.igHandle;
+
+            applyStudentDataToDOM();
+            closeEditModal();
+            showToast('已更新個人網站資訊！');
+        }
+
+        function openQrModal(platform) {
+            const modal = document.getElementById('qr-modal');
+            const platEl = document.getElementById('qr-modal-platform');
+            const handleEl = document.getElementById('qr-modal-handle');
+            if (!modal) return;
+            if (platEl) platEl.textContent = platform + ' // DIGITAL QR CARD';
+            if (handleEl) {
+                handleEl.textContent = platform === 'LINE' ? ('LINE ID: ' + studentData.lineId) : ('IG: ' + studentData.igHandle);
+            }
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeQrModal() {
+            const modal = document.getElementById('qr-modal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        window.addEventListener('resize', () => {
+            updateCalculusCanvas();
+        });
+
+        window.onload = function () {
+            applyStudentDataToDOM();
+            try {
+                const savedPhoto = localStorage.getItem(PHOTO_STORAGE_KEY);
+                if (savedPhoto) {
+                    const img = document.getElementById('profilePhoto');
+                    if (img) img.src = savedPhoto;
+                    const badge = document.getElementById('photo-source-badge');
+                    if (badge) badge.textContent = '已載入您的自訂照片檔';
+                }
+            } catch (e) {}
+            updateCalculusCanvas();
+        };
+    </script>
+</body>
+</html>
